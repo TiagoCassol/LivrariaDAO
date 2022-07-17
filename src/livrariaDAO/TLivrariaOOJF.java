@@ -8,6 +8,7 @@ package livrariaDAO;
 import controler.CClientes;
 import controler.CEditoras;
 import controler.CLivros;
+import controler.CVendaLivros;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -26,6 +27,7 @@ import javax.swing.JTextArea;
 import view.jfCliente;
 import view.jfEditora;
 import view.jfLivro;
+import view.jfVenda;
 /**
  *
  * @author jairb
@@ -34,6 +36,7 @@ public class TLivrariaOOJF extends JFrame implements ActionListener{
     public static CClientes cadClientes = new CClientes();// Repositório de Clientes
     public static CEditoras cadEditoras = new CEditoras();
     public static CLivros cadLivros = new CLivros();
+    public static CVendaLivros cadVendas = new CVendaLivros();
     
     JTextArea output;
     JScrollPane scrollPane;
@@ -74,6 +77,12 @@ public class TLivrariaOOJF extends JFrame implements ActionListener{
         menuItem.addActionListener(this);
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Vendas",
+                KeyEvent.VK_L);
+        menuItem.setActionCommand("mVendas");
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
+        
         return menuBar;
     }
 
@@ -97,9 +106,23 @@ public class TLivrariaOOJF extends JFrame implements ActionListener{
             }
         }
         if ("mLivros".equals(e.getActionCommand())) {
-            jfLivro liv = new jfLivro();
-            liv.setVisible(true);
-            liv.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            try {
+                jfLivro liv = new jfLivro();
+                liv.setVisible(true);
+                liv.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            } catch (SQLException ex) {
+                Logger.getLogger(TLivrariaOOJF.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if ("mVendas".equals(e.getActionCommand())) {
+            try {
+                jfVenda liv = new jfVenda();
+                liv.setVisible(true);
+                liv.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            } catch (SQLException ex) {
+                Logger.getLogger(TLivrariaOOJF.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }

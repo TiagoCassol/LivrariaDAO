@@ -6,20 +6,25 @@
 package controler;
 
 import java.util.ArrayList;
-import model.vendaLivro;
+import model.Venda;
 
 /**
  *
  * @author jairb
  */
 public class CVendaLivros {
-    ArrayList<vendaLivro> vendaLivros = new ArrayList<>();
+    ArrayList<Venda> vendaLivros = new ArrayList<>();
+    int idVen = 1;
     
-    public void addVendaLivro(vendaLivro vl){
+    public void addVendaLivro(Venda vl){
         vendaLivros.add(vl);
     }
+    
+        public int gerarId() {
+        return this.idVen++;
+    }
 
-    public ArrayList<vendaLivro> getVendaLivros() {
+    public ArrayList<Venda> getVendaLivros() {
         return vendaLivros;
     }    
     

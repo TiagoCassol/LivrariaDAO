@@ -61,9 +61,18 @@ public class ClienteService {
         ClienteDAO cDAO = DAOFactory.getClienteDAO();
         cDAO.atualizarCliente(cVO);
     }
+    public int getIdCliente(String cpf) throws SQLException {
+    ClienteDAO cDAO = DAOFactory.getClienteDAO();
+    return cDAO.getIdCliente(cpf);
+    }
     
     public void atualizarClienteCnpjBD(Cliente cVO) throws SQLException {
         ClienteDAO cDAO = DAOFactory.getClienteDAO();
         cDAO.atualizarClienteCnpj(cVO);
+    }
+    
+     public String getNomeCliente(int id) throws SQLException {
+        ClienteDAO cDAO = DAOFactory.getClienteDAO();
+        return cDAO.getNomeCliente(id);
     }
 }

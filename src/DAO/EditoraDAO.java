@@ -85,11 +85,12 @@ public class EditoraDAO {
             ResultSet rs = stat.executeQuery(sql);
             while (rs.next()) {
                 //lado do java||lado do banco
-                g.setIdEditora(rs.getInt("idCliente"));
-                g.setNmEditora(rs.getString("nomeCliente"));
-                g.setEndereco("endereco");
+                g.setIdEditora(rs.getInt("idEditora"));
+                g.setNmEditora(rs.getString("nmEditora"));
+                g.setEndereco(rs.getString("endereco"));
                 g.setTelefone(rs.getString("telefone"));
-
+                g.setGerente(rs.getString("gerente"));
+               // System.out.println(sql);
             }
         } catch (SQLException e) {
             throw new SQLException("Editora com este gerente não existe. \n" + e.getMessage());
@@ -98,6 +99,30 @@ public class EditoraDAO {
             stat.close();
         }
         return g;
+    }
+     
+     public void atualizarEditora(Editora eVO) throws SQLException {
+        Connection con = Conexao.getConexao();
+        //cria um objeto stat reponsavel por enviar os comandos sql do Java
+        //para serem executados dentro do DB
+        Statement stat = con.createStatement();
+
+        try {
+            String sql;
+            sql = "update editora set "
+                    + "nmEditora = '" + eVO.getNmEditora() + "', "
+                    + "gerente = '" + eVO.getGerente() + "', "
+                    + "endereco = '" + eVO.getEndereco() + "', "
+                    + "telefone = '" + eVO.getTelefone() + "' "
+                    + "where idEditora = " + eVO.getIdEditora() + "";
+            System.out.println(sql);
+            stat.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao atualizar Editora. \n" + e.getMessage());
+        } finally {
+            con.close();
+            stat.close();
+        }
     }
      
      public void deletarEditora(int id) throws SQLException {
@@ -116,6 +141,22 @@ public class EditoraDAO {
             stat.close();
 
         }
+    }
+     
+      public int getIdEditora(String gerente) throws SQLException{
+          int idEditora = 0;
+          try{
+        for (Editora edi : buscarEditoras()) {
+            if (edi.getGerente().equals(gerente)) {
+                idEditora = edi.getIdEditora();
+                break;
+            }
+        }
+           }catch (SQLException e) {
+       throw new SQLException ("editora com este gerente não existe. \n"
+       + e.getMessage());
+           }
+        return idEditora;
     }
 
 }

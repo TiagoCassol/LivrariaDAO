@@ -5,11 +5,18 @@
  */
 package view;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import model.livro;
+import model.Livro;
 import static livrariaDAO.TLivrariaOOJF.cadEditoras;
 import static livrariaDAO.TLivrariaOOJF.cadLivros;
+import services.EditoraService;
+import services.LivroService;
+
+import services.ServicosFactory;
 
 /**
  *
@@ -20,9 +27,9 @@ public class jfLivro extends javax.swing.JFrame {
     /**
      * Creates new form jfLivro
      */
-    public jfLivro() {
+    public jfLivro() throws SQLException {
         initComponents();
-        addRowToTable();
+        addRowToTableBD();
         this.addEditoraJCB();
     }
 
@@ -33,12 +40,13 @@ public class jfLivro extends javax.swing.JFrame {
         });
     }
 
-    public void addRowToTable() {
+    public void addRowToTableBD() throws SQLException {
         DefaultTableModel model = (DefaultTableModel) jtLivros.getModel();
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
         Object rowData[] = new Object[8];//define vetor das colunas
-        for (livro listLiv : cadLivros.getLivros()) {
+        LivroService livroS = ServicosFactory.getLivroService();
+        for (Livro listLiv : livroS.getLivros()) {
             rowData[0] = listLiv.getIdLivro();
             rowData[1] = listLiv.getTitulo();
             rowData[2] = listLiv.getAssunto();
@@ -82,8 +90,15 @@ public class jfLivro extends javax.swing.JFrame {
         jtfPreco = new javax.swing.JTextField();
         jbLimpar = new javax.swing.JButton();
         jbCancelar = new javax.swing.JButton();
+        jtfEditora = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jcbEditora.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcbEditoraActionPerformed(evt);
+            }
+        });
 
         jbSalvar.setText("Salvar");
         jbSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -179,6 +194,8 @@ public class jfLivro extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jtfEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(0, 0, Short.MAX_VALUE))
                                     .addComponent(jcbEditora, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -210,7 +227,8 @@ public class jfLivro extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jtfISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(jLabel8)
+                    .addComponent(jtfEditora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
@@ -249,21 +267,33 @@ public class jfLivro extends javax.swing.JFrame {
 
     private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
         // TODO add your handling code here:
-        livro liv = new livro();
+        Livro liv = new Livro();
         if (jtfTitulo.getText().isEmpty() && jtfAutor.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Preencher Titulo e Autor!");
         } else {
-            liv.setIdLivro(cadLivros.addIdLiv());
-            liv.setTitulo(jtfTitulo.getText());
-            liv.setAssunto(jtfAssunto.getText());
-            liv.setAutor(jtfAutor.getText());
-            liv.setIsbn(jtfISBN.getText());
-            liv.setEstoque(Integer.parseInt(jtfEstoque.getText()));
-            liv.setPreco(Float.parseFloat(jtfPreco.getText()));
-            liv.setIdEditora(cadEditoras.getIdEditora(jcbEditora.getSelectedItem().toString()));
-            cadLivros.addLivro(liv);
-            jbLimpar.doClick();
-            this.addRowToTable();
+            try {
+            EditoraService editoraS = ServicosFactory.getEditoraService();
+            int id = cadLivros.gerarId();
+            int idEditora;
+            
+                //idEditora = editoraS.getIdEditora(jcbEditora.getSelectedItem().toString());
+                 idEditora = editoraS.getIdEditora((jtfEditora.getText()));
+            String titulo=jtfTitulo.getText();
+            String assunto=jtfAssunto.getText();
+            String autor=jtfAutor.getText();
+            String isbn=jtfISBN.getText();
+            int estoque=(Integer.parseInt(jtfEstoque.getText()));
+            float preco=(Float.parseFloat(jtfPreco.getText()));
+            
+            Livro l = new Livro(id, titulo, autor, assunto, isbn,estoque,preco,idEditora);
+            LivroService livroS = ServicosFactory.getLivroService();
+       
+                livroS.cadLivro(l);
+                this.addRowToTableBD();
+                jbLimpar.doClick();
+            } catch (SQLException ex) {
+                Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+            }
             JOptionPane.showMessageDialog(this, "Livro " + liv.getTitulo() + " cadastrado com sucesso!");
         }
     }//GEN-LAST:event_jbSalvarActionPerformed
@@ -271,6 +301,10 @@ public class jfLivro extends javax.swing.JFrame {
     private void jbLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimparActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jbLimparActionPerformed
+
+    private void jcbEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbEditoraActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jcbEditoraActionPerformed
 
     /**
      * @param args the command line arguments
@@ -302,7 +336,11 @@ public class jfLivro extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new jfLivro().setVisible(true);
+                try {
+                    new jfLivro().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -325,6 +363,7 @@ public class jfLivro extends javax.swing.JFrame {
     private javax.swing.JTable jtLivros;
     private javax.swing.JTextField jtfAssunto;
     private javax.swing.JTextField jtfAutor;
+    private javax.swing.JTextField jtfEditora;
     private javax.swing.JTextField jtfEstoque;
     private javax.swing.JTextField jtfISBN;
     private javax.swing.JTextField jtfPreco;

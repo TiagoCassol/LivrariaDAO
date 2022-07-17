@@ -104,8 +104,8 @@ public class jfEditora extends javax.swing.JFrame {
         jbCancelar = new javax.swing.JButton();
         jbLimpar = new javax.swing.JButton();
         jbDeletar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jbEditar = new javax.swing.JButton();
+        jbConfirmar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -167,9 +167,19 @@ public class jfEditora extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Editar");
+        jbEditar.setText("Editar");
+        jbEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEditarActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Confirmar");
+        jbConfirmar.setText("Confirmar");
+        jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbConfirmarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -180,9 +190,9 @@ public class jfEditora extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jButton2)
+                        .addComponent(jbEditar)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3)
+                        .addComponent(jbConfirmar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbCancelar))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
@@ -247,8 +257,8 @@ public class jfEditora extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
+                    .addComponent(jbEditar)
+                    .addComponent(jbConfirmar)
                     .addComponent(jbCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -294,7 +304,7 @@ public class jfEditora extends javax.swing.JFrame {
 
     private void jbDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeletarActionPerformed
         // TODO add your handling code here:
-        /*
+        
         int linha;
         String gerente;
         linha = jtEditora.getSelectedRow();
@@ -317,7 +327,7 @@ public class jfEditora extends javax.swing.JFrame {
             //cadPessoas.deletar(p);
             try {
                 //addRowToTable();
-                editoraS.deletarEditora(e.getIdEditora());
+                editoraS.deletarEditoraBD(e.getIdEditora());
                 addRowToTableBD();
                 JOptionPane.showMessageDialog(this, "Pessoa deletada com sucesso!", "", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
@@ -327,8 +337,76 @@ public class jfEditora extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Entedemos sua decisão", "", JOptionPane.INFORMATION_MESSAGE);
         }
         jbDeletar.setEnabled(true);
-        */
+        
     }//GEN-LAST:event_jbDeletarActionPerformed
+
+    private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            //ajustando comportamento dos botões
+
+            //carregar os dados da pessoa selecionada nos JTextFields
+            int linha;
+            String gerente;
+
+            linha = jtEditora.getSelectedRow();
+            gerente = (String) jtEditora.getValueAt(linha, 4);
+
+            //Pessoa p = cadPessoas.getByDoc(cpf);
+            EditoraService editoraS = ServicosFactory.getEditoraService();
+            Editora e = editoraS.buscaGerenteBD(gerente);
+
+            // if (jrbCpf.isSelected()) {
+                jtfNomeEditora.setText(e.getNmEditora());
+                jtfGerente.setText(e.getGerente());
+                jtfEndereco.setText(e.getEndereco());
+                jtfTelefone.setText(e.getTelefone());
+
+           
+        } catch (SQLException ex) {
+            Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jbEditarActionPerformed
+
+    private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
+        // TODO add your handling code here:
+        btnClick = (JButton) evt.getSource();
+        if (validaInputs()) {
+            try {
+
+                EditoraService editoraS = ServicosFactory.getEditoraService();
+                //Pessoa p = cadPessoas.getByDoc(jtfCPF.getText())8;
+                Editora e = editoraS.buscaGerenteBD(jtfGerente.getText());
+               
+                    e.setNmEditora(jtfNomeEditora.getText());
+                    e.setEndereco(jtfEndereco.getText());
+                    e.setTelefone(jtfTelefone.getText());
+                    e.setGerente(jtfGerente.getText());
+
+                    //atualiza pessoa no BD com dados na tela
+                    editoraS.atualizarEditoraBD(e);
+
+                    addRowToTableBD();
+              
+
+
+            } catch (SQLException ex) {
+                Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            jbLimpar.doClick();
+            // jBLimpar.setText("Limpar");
+            jTableFilterClear();
+            String msg = "Dados atualizados com sucesso!";
+            JOptionPane.showMessageDialog(this, msg, ".: Atualizar :.",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            //jbLimpar.doClick();
+            //jtfCPF.setEnabled(true);
+        }
+        
+    }//GEN-LAST:event_jbConfirmarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -370,8 +448,6 @@ public class jfEditora extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -381,7 +457,9 @@ public class jfEditora extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JButton jbCancelar;
+    private javax.swing.JButton jbConfirmar;
     private javax.swing.JButton jbDeletar;
+    private javax.swing.JButton jbEditar;
     private javax.swing.JButton jbLimpar;
     private javax.swing.JButton jbSalvar;
     private javax.swing.JTable jtEditora;

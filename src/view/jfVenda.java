@@ -6,6 +6,7 @@
 package view;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.logging.Level;
@@ -64,6 +65,7 @@ public class jfVenda extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        bgCpfCnpj = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jtfLivro = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -80,10 +82,14 @@ public class jfVenda extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jtfCliente = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
         jlCliente = new javax.swing.JLabel();
         jlLivro = new javax.swing.JLabel();
         jbCancelar = new javax.swing.JButton();
+        jrbCpf = new javax.swing.JRadioButton();
+        jrbCnpj = new javax.swing.JRadioButton();
+        jtfCpfCnpj = new javax.swing.JTextField();
+        jlNomeCliente = new javax.swing.JLabel();
+        jbDevolucao = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -133,7 +139,7 @@ public class jfVenda extends javax.swing.JFrame {
 
         jlSubTotal.setText("0");
 
-        jbComprar.setText("Comprar");
+        jbComprar.setText("Vender");
         jbComprar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbComprarActionPerformed(evt);
@@ -173,9 +179,7 @@ public class jfVenda extends javax.swing.JFrame {
 
         jLabel10.setFont(new java.awt.Font("Verdana", 3, 18)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Comprar Livro");
-
-        jButton4.setText("Escolher esse livro");
+        jLabel10.setText("Vender Livro");
 
         jlCliente.setText("Cliente...");
         jlCliente.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -198,6 +202,21 @@ public class jfVenda extends javax.swing.JFrame {
             }
         });
 
+        bgCpfCnpj.add(jrbCpf);
+        jrbCpf.setText("CPF");
+
+        bgCpfCnpj.add(jrbCnpj);
+        jrbCnpj.setText("CNPJ");
+
+        jlNomeCliente.setText("Cliente...");
+        jlNomeCliente.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jlNomeClienteFocusLost(evt);
+            }
+        });
+
+        jbDevolucao.setText("Devolução");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -208,31 +227,23 @@ public class jfVenda extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jtfCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jlCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jbComprar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbCancelar))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addGap(26, 26, 26))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jtfCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                            .addComponent(jtfLivro))
+                        .addComponent(jLabel9)
+                        .addGap(26, 26, 26)
+                        .addComponent(jtfLivro)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jlLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jlCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jlLivro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton4)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jlSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -246,8 +257,22 @@ public class jfVenda extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel2)))
                                 .addGap(4, 4, 4)
-                                .addComponent(jlEstoque)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(jlEstoque))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jbDevolucao)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jlSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jrbCpf)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jrbCnpj)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtfCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jlNomeCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -260,6 +285,12 @@ public class jfVenda extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jlCliente))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jrbCpf)
+                    .addComponent(jrbCnpj)
+                    .addComponent(jtfCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlNomeCliente))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jtfLivro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -282,12 +313,11 @@ public class jfVenda extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbComprar)
-                    .addComponent(jbCancelar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jbCancelar)
+                    .addComponent(jbDevolucao))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -318,6 +348,9 @@ public class jfVenda extends javax.swing.JFrame {
     private void jbComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbComprarActionPerformed
         // TODO add your handling code here:
         Venda ven = new Venda();
+        
+        if (jrbCpf.isSelected()) {
+        }
         if (jtfCliente.getText().isEmpty() && jtfLivro.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Preencher cliente e livro!");
         } else {
@@ -325,19 +358,19 @@ public class jfVenda extends javax.swing.JFrame {
                 VendaService vendaS = ServicosFactory.getVendaService();
                 ClienteService clienteS = ServicosFactory.getClienteService();
                 LivroService livroS = ServicosFactory.getLivroService();
+                
+               // Livro l = livroS.buscaLivroBD(isbn);
                 int id = cadVendas.gerarId();
-                int idCliente;
-                int idLivro;
-
                 //idEditora = editoraS.getIdEditora(jcbEditora.getSelectedItem().toString());
-                idCliente = clienteS.getIdCliente((jlCliente.getText()));
-                idLivro = livroS.getIdLivro((jlLivro.getText()));
-                int quantCompra = (Integer.parseInt(jtfQuant.getText()));
-               // int estoque = (Integer.parseInt(jlEstoque.getText()));
+                int idCliente = clienteS.getIdCliente((jtfCliente.getText()));
+                int idLivro = livroS.getIdLivro((jtfLivro.getText()));
+                int quantCompra = (Integer.parseInt(jtfQuant.getText()));          
                 float subTotal = (Float.parseFloat(jlSubTotal.getText())); 
-                LocalDateTime dataVenda= LocalDateTime.now();
+                LocalDate dataVenda = LocalDate.now();
                 Venda v = new Venda(id, idCliente, idLivro, quantCompra, subTotal, dataVenda);
                 vendaS.cadVenda(v);
+                int estoque = (Integer.parseInt(jlEstoque.getText())- Integer.parseInt(jtfQuant.getText()));
+                //jlEstoque.setText(estoque);
                 this.addRowToTableBD();
                 //jbCancelar.doClick();
             } catch (SQLException ex) {
@@ -396,9 +429,15 @@ public class jfVenda extends javax.swing.JFrame {
         // TODO add your handling code here:
        // float subTotal = (Float.parseFloat(jlSubTotal.getText())); 
         //float jlPreco = (Float.parseFloat(jlPreco.getText()));
+        
         float calculo = (Float.parseFloat(jlPreco.getText())) * (Float.parseFloat(jtfQuant.getText()));
         jlSubTotal.setText(Float.toString(calculo));
+        
     }//GEN-LAST:event_jtfQuantFocusLost
+
+    private void jlNomeClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jlNomeClienteFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jlNomeClienteFocusLost
 
     /**
      * @param args the command line arguments
@@ -440,7 +479,7 @@ public class jfVenda extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton4;
+    private javax.swing.ButtonGroup bgCpfCnpj;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -453,13 +492,18 @@ public class jfVenda extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JButton jbCancelar;
     private javax.swing.JButton jbComprar;
+    private javax.swing.JButton jbDevolucao;
     private javax.swing.JLabel jlCliente;
     private javax.swing.JLabel jlEstoque;
     private javax.swing.JLabel jlLivro;
+    private javax.swing.JLabel jlNomeCliente;
     private javax.swing.JLabel jlPreco;
     private javax.swing.JLabel jlSubTotal;
+    private javax.swing.JRadioButton jrbCnpj;
+    private javax.swing.JRadioButton jrbCpf;
     private javax.swing.JTable jtVenda;
     private javax.swing.JTextField jtfCliente;
+    private javax.swing.JTextField jtfCpfCnpj;
     private javax.swing.JTextField jtfLivro;
     private javax.swing.JTextField jtfQuant;
     // End of variables declaration//GEN-END:variables

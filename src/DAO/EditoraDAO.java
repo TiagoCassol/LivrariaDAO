@@ -143,11 +143,11 @@ public class EditoraDAO {
         }
     }
      
-      public int getIdEditora(String gerente) throws SQLException{
+      public int getIdEditora(String editora) throws SQLException{
           int idEditora = 0;
           try{
         for (Editora edi : buscarEditoras()) {
-            if (edi.getGerente().equals(gerente)) {
+            if (edi.getNmEditora().equals(editora)) {
                 idEditora = edi.getIdEditora();
                 break;
             }

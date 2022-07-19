@@ -35,6 +35,10 @@ public class LivroService {
         LivroDAO lDAO = DAOFactory.getLivroDAO();
         return lDAO.verIsbn(isbn);
     }
+    public Livro buscaLivroBD(String isbn) throws SQLException {
+        LivroDAO lDAO = DAOFactory.getLivroDAO();
+        return lDAO.getByIsbnBD(isbn);
+    }
     
     public String getNomeLivro(int id) throws SQLException {
         LivroDAO lDAO = DAOFactory.getLivroDAO();

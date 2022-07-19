@@ -88,7 +88,7 @@ public class ClienteDAO {
                 c.setCnpj(rs.getString("cnpj"));
                 c.setEndereco(rs.getString("endereco"));
                 c.setTelefone(rs.getString("telefone"));
-
+           
                 clientes.add(c);
             }
             return clientes;
@@ -186,7 +186,8 @@ public class ClienteDAO {
         int idCliente = 0;
         try {
             for (Cliente cli : buscarClientes()) {
-                if (cli.getCpf().equals(cpf)) {
+                System.out.println("teste: "+cli);
+                if (cli.getCpf()!= null && cli.getCpf().equals(cpf)) {             
                     idCliente = cli.getIdCliente();
                     break;
                 }
@@ -339,5 +340,36 @@ public class ClienteDAO {
             stat.close();
         }
     }
+    
+    
+     public Cliente pesqCli(int cpfCNPJ, String pesq) throws SQLException {
+    Cliente c = new Cliente();
+    try {
+      switch (cpfCNPJ) {
+        case 1:
+          for (Cliente cli : buscarClientes()) {
+            if (cli.getCpf() != null && cli.getCpf().equals(pesq)) {
+              c = cli;
+              break;
+            }
+          }
+          break;
+        case 2:
+          for (Cliente cli : buscarClientes()) {
+            if (cli.getCnpj() != null && cli.getCnpj().equals(pesq)) {
+              c = cli;
+              break;
+            }
+          }
+          break;
+        default:
+          System.out.println("Cliente não Encontrado!!!");
+          break;
+      }
+      return c;
+    } catch (SQLException e) {
+      throw new SQLException(e.getMessage());
+    }
+  }
 
 }

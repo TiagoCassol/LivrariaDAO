@@ -13,12 +13,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import model.Livro;
 
-
 /**
  *
  * @author casso
  */
 public class LivroDAO {
+
     public void cadastrarLivro(Livro lVO) throws SQLException {
         //busca conexão com o BD
         Connection con = Conexao.getConexao();
@@ -32,10 +32,9 @@ public class LivroDAO {
                     + lVO.getAutor() + "','"
                     + lVO.getIsbn() + "',"
                     + lVO.getEstoque() + ","
-                    + lVO.getPreco()+","
-                    + lVO.getIdEditora()+")";
-                  
-           
+                    + lVO.getPreco() + ","
+                    + lVO.getIdEditora() + ")";
+
             //vamos executar o comando  construido na sting aql
             System.out.println(sql);
             stat.execute(sql);
@@ -46,8 +45,8 @@ public class LivroDAO {
             con.close();
         }
     }
-    
-     public ArrayList<Livro> buscarLivros() throws SQLException {
+
+    public ArrayList<Livro> buscarLivros() throws SQLException {
         //busca conexão com o BD
         Connection con = Conexao.getConexao();
         //cria um objeto stat reponsavel por enviar os comandos sql do Java
@@ -81,8 +80,8 @@ public class LivroDAO {
             con.close();
         }
     }
-     
-      public Livro getByIsbnBD(String isbn) throws SQLException {
+
+    public Livro getByIsbnBD(String isbn) throws SQLException {
         Connection con = Conexao.getConexao();
         //cria um objeto stat reponsavel por enviar os comandos sql do Java
         //para serem executados dentro do DB
@@ -102,7 +101,7 @@ public class LivroDAO {
                 l.setEstoque(rs.getInt("estoque"));
                 l.setPreco(rs.getInt("preco"));
                 l.setIdEditora(rs.getInt("idEditora"));
-               // System.out.println(sql);
+                // System.out.println(sql);
             }
         } catch (SQLException e) {
             throw new SQLException("Editora com este isbn não existe. \n" + e.getMessage());
@@ -112,8 +111,8 @@ public class LivroDAO {
         }
         return l;
     }
-    
-      public void atualizarLivro(Livro lVO) throws SQLException {
+
+    public void atualizarLivro(Livro lVO) throws SQLException {
         Connection con = Conexao.getConexao();
         //cria um objeto stat reponsavel por enviar os comandos sql do Java
         //para serem executados dentro do DB
@@ -126,9 +125,9 @@ public class LivroDAO {
                     + "autor = '" + lVO.getAutor() + "', "
                     + "assunto = '" + lVO.getAssunto() + "', "
                     + "isbn = '" + lVO.getIsbn() + "', "
-                    +"estoque= "+ lVO.getEstoque()+","
-                    +"preco"+ lVO.getPreco()+","
-                    +"IdEditora"+lVO.getIdEditora()+""
+                    + "estoque= " + lVO.getEstoque() + ","
+                    + "preco" + lVO.getPreco() + ","
+                    + "IdEditora" + lVO.getIdEditora() + ""
                     + "where idLivro = " + lVO.getIdLivro() + "";
             System.out.println(sql);
             stat.executeUpdate(sql);
@@ -139,7 +138,8 @@ public class LivroDAO {
             stat.close();
         }
     }
-      public void deletarLivro(int id) throws SQLException {
+
+    public void deletarLivro(int id) throws SQLException {
         Connection con = Conexao.getConexao();
         //cria um objeto stat reponsavel por enviar os comandos sql do Java
         //para serem executados dentro do DB
@@ -156,23 +156,25 @@ public class LivroDAO {
 
         }
     }
-      
-      public int getIdLivro(String isbn) throws SQLException{
-          int idLivro = 0;
-          try{
-        for (Livro liv : buscarLivros()) {
-            if (liv.getIsbn().equals(isbn)) {
-                idLivro = liv.getIdLivro();
-                break;
+
+    public int getIdLivro(String isbn) throws SQLException {
+        int idLivro = 0;
+        try {
+            for (Livro liv : buscarLivros()) {
+                
+                if (liv.getIsbn().equals(isbn)) {
+                    System.out.println("teste: "+liv);
+                    idLivro = liv.getIdLivro();
+                    break;
+                }
             }
+        } catch (SQLException e) {
+            throw new SQLException("Livro com este isbn não existe. \n"
+                    + e.getMessage());
         }
-           }catch (SQLException e) {
-       throw new SQLException ("Livro com este isbn não existe. \n"
-       + e.getMessage());
-           }
         return idLivro;
     }
-      
+
     public boolean verIsbn(String isbn) throws SQLException {
         Connection con = Conexao.getConexao();
         //cria um objeto stat reponsavel por enviar os comandos sql do Java
@@ -185,7 +187,7 @@ public class LivroDAO {
             sql = "select isbn from livro where isbn = '" + isbn + "'";
             ResultSet rs = stat.executeQuery(sql);
             while (rs.next()) {
-                verIsbn= rs.wasNull();
+                verIsbn = rs.wasNull();
             }
         } catch (SQLException e) {
             throw new SQLException("livro com este isbn não existe. \n" + e.getMessage());
@@ -196,7 +198,7 @@ public class LivroDAO {
         }
         return verIsbn;
     }
-  
+
     public String getNomeLivro(int id) throws SQLException {
         String nomeLivro = null;
         try {
@@ -211,7 +213,7 @@ public class LivroDAO {
         }
         return nomeLivro;
     }
-    
+
     public float getPrecoLivro(int id) throws SQLException {
         float precoLivro = 0;
         try {
@@ -226,7 +228,7 @@ public class LivroDAO {
         }
         return precoLivro;
     }
-    
+
     public float getEstoqueLivro(int id) throws SQLException {
         float estoqueLivro = 0;
         try {
@@ -241,5 +243,5 @@ public class LivroDAO {
         }
         return estoqueLivro;
     }
-      
+
 }

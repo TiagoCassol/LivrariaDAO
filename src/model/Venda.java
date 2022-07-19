@@ -5,6 +5,7 @@
  */
 package model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -19,12 +20,12 @@ public class Venda {
     private int idLivro;
     private int qtd;
     private float subTotal;
-    private LocalDateTime dataVenda;
+    private LocalDate dataVenda;
 
     public Venda() {
     }
 
-    public Venda(int idVenda,int idCliente, int idLivro, int qtd, float subTotal, LocalDateTime dataVenda) {
+    public Venda(int idVenda,int idCliente, int idLivro, int qtd, float subTotal, LocalDate dataVenda) {
         this.idVenda = idVenda;
         this.idCliente = idCliente;
         this.idLivro = idLivro;
@@ -65,11 +66,11 @@ public class Venda {
         this.subTotal = subTotal;
     }
 
-    public LocalDateTime getDataVenda() {
+    public LocalDate getDataVenda() {
         return dataVenda;
     }
 
-    public void setDataVenda(LocalDateTime dataVenda) {
+    public void setDataVenda(LocalDate dataVenda) {
         this.dataVenda = dataVenda;
     }
 

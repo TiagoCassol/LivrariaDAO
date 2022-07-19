@@ -4,16 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Geral">
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/view/jfEditora.java</file>
-            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/services/EditoraService.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/services/LivroService.java</file>
-            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/DAO/ClienteDAO.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/services/VendaService.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/DAO/VendaDAO.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/view/jfVenda.java</file>
-            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/services/ClienteService.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/model/Venda.java</file>
-            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/DAO/EditoraDAO.java</file>
-            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/model/Cliente.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/DAO/LivroDAO.java</file>
         </group>
     </open-files>

@@ -66,10 +66,8 @@ public class VendaDAO {
                 v.setIdCliente(rs.getInt("idCliente"));
                 v.setIdLivro(rs.getInt("idLivro"));
                 v.setQtd(rs.getInt("quantCompra"));
-                v.setSubTotal(rs.getInt("subTotal"));  
-                
-                v.setDataVenda(rs.getDate("dataVenda").toLocalDate());
-                
+                v.setSubTotal(rs.getInt("subTotal"));              
+                v.setDataVenda(rs.getDate("dataVenda").toLocalDate());          
                 vendas.add(v);
             }
             return vendas;

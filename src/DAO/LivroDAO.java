@@ -249,94 +249,41 @@ public class LivroDAO {
         return estoqueLivro;
     }
     
-    public int aumentarEstoqueLivro(int id) throws SQLException {
-        int estoqueLivro = 0;
-        try {
-            for (Livro liv : buscarLivros()) {
-                if (liv.getIdLivro() == id) {
-                    estoqueLivro = liv.getEstoque();
-                }
-            }
-        } catch (SQLException e) {
-            throw new SQLException("Estoque com este id não existe. \n"
-                    + e.getMessage());
-        }
-        return estoqueLivro;
-    }
-    
-    public int diminuirEstoqueLivro(Livro quantCompra) throws SQLException {
-        Connection con = Conexao.getConexao();
+  public void diminuirEstoque(int idLivro, int quantCompra) throws SQLException{
+      Connection con = Conexao.getConexao();
         //cria um objeto stat reponsavel por enviar os comandos sql do Java
         //para serem executados dentro do DB
         Statement stat = con.createStatement();
-        int estoque =0;
-        try {
-            String sql;
-            sql = "update livro set "
-                    + "estoque= "+ quantCompra.getEstoque()+ ""
-                    + "where idLivro = " + quantCompra.getIdLivro() + "";
-            System.out.println(sql);
-            stat.executeUpdate(sql);
-        } catch (SQLException e) {
-            throw new SQLException("Erro ao atualizar estoque. \n" + e.getMessage());
-        } finally {
-            con.close();
-            stat.close();
+        try{
+        String sql;
+        sql="update livro set estoque = estoque -"+quantCompra+" where idLivro = " + idLivro;
+        System.out.println(sql);
+        stat.executeUpdate(sql);
+        }catch (SQLException e){
+            throw new SQLException("Erro ao atualizar estoque! "+e.getMessage());
+        }finally{ 
+        con.close();
+        stat.close();
         }
-        return estoque;
-    }
-/*
-        public int diminuirEstoqueLiv(int estoque) throws SQLException {
-         Connection con = Conexao.getConexao();
+  }
+  
+  public void aumentarEstoque(int idLivro, int quantCompra) throws SQLException{
+      Connection con = Conexao.getConexao();
+        //cria um objeto stat reponsavel por enviar os comandos sql do Java
+        //para serem executados dentro do DB
         Statement stat = con.createStatement();
-        
-        int estoque = estoqueLivro;
-        int estoqueLivro = getEstoqueLivro(Integer.parseInt(jlEstoque.getText()));
-        
-        VendaService vendaS = ServicosFactory.getVendaService();
-        estoque = estoqueLivro - estoque;
-    }
-*/
-        public int diminuirEstoque(Livro lVO) throws SQLException {
-        Connection con = Conexao.getConexao();
-        Statement stat = con.createStatement();
-        int estoque = 0;
-        try {
-            String sql;
-            sql = "update livro set "
-
-                    + "estoque= " + lVO.getEstoque() + " "
-                    + "where idLivro = " + lVO.getIdLivro() + "";
-            System.out.println(sql);
-            stat.executeUpdate(sql);
-        } catch (SQLException e) {
-            throw new SQLException("Erro ao atualizar livro. \n" + e.getMessage());
-        } finally {
-            con.close();
-            stat.close();
+        try{
+        String sql;
+        sql="update livro set estoque = estoque +"+quantCompra+" where idLivro = " + idLivro;
+        System.out.println(sql);
+        stat.executeUpdate(sql);
+        }catch (SQLException e){
+            throw new SQLException("Erro ao atualizar estoque! "+e.getMessage());
+        }finally{ 
+        con.close();
+        stat.close();
         }
-        return estoque;
-    }
-        
-        /*
-      public void diminuirEstoque(Livro lVO) throws SQLException {
-        Connection con = Conexao.getConexao();
-        Statement stat = con.createStatement();
-        try {
-            String sql;
-            sql = "update livro set "
-
-                    + "estoque= " + lVO.getEstoque() + " "
-                    + "where idLivro = " + lVO.getIdLivro() + "";
-            System.out.println(sql);
-            stat.executeUpdate(sql);
-        } catch (SQLException e) {
-            throw new SQLException("Erro ao atualizar livro. \n" + e.getMessage());
-        } finally {
-            con.close();
-            stat.close();
-        }
-    }
-*/
-         
+  }
+  
+      
 }

@@ -63,14 +63,8 @@ public class LivroService {
         LivroDAO lDAO = DAOFactory.getLivroDAO();
         lDAO.atualizarLivro(lVO);
     }
-    /*
-    public int diminuirEstoqueBD(int estoque) throws SQLException {
+    public void diminuirEstoqueBD(int idLivro, int quantCompra) throws SQLException {
         LivroDAO lDAO = DAOFactory.getLivroDAO();
-        return lDAO.diminuirEstoqueLivro(estoque);
-    }
-    */
-    public int diminuirEstoqueBD(Livro lVO) throws SQLException {
-        LivroDAO lDAO = DAOFactory.getLivroDAO();
-        return lDAO.diminuirEstoque(lVO);
+        lDAO.diminuirEstoque(idLivro, quantCompra);
     }
 }

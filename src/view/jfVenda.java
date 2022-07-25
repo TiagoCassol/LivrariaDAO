@@ -30,7 +30,9 @@ import util.ValidaCPF;
  * @author casso
  */
 public class jfVenda extends javax.swing.JFrame {
+
     JButton btnClick = null;
+
     /**
      * Creates new form jfVenda
      */
@@ -92,6 +94,7 @@ public class jfVenda extends javax.swing.JFrame {
         jrbCpf = new javax.swing.JRadioButton();
         jrbCnpj = new javax.swing.JRadioButton();
         jbDevolucao = new javax.swing.JButton();
+        jbLimpar = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -229,6 +232,18 @@ public class jfVenda extends javax.swing.JFrame {
         jrbCnpj.setText("CNPJ");
 
         jbDevolucao.setText("Devolução");
+        jbDevolucao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbDevolucaoActionPerformed(evt);
+            }
+        });
+
+        jbLimpar.setText("Limpar");
+        jbLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbLimparActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -239,16 +254,6 @@ public class jfVenda extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jbComprar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jbCancelar))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jbDevolucao)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel6)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jlSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
@@ -262,7 +267,8 @@ public class jfVenda extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel2)))
                         .addGap(4, 4, 4)
-                        .addComponent(jlEstoque))
+                        .addComponent(jlEstoque)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9)
@@ -280,7 +286,20 @@ public class jfVenda extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jtfCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jlCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addComponent(jlCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jbComprar)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jbDevolucao)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jlSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbLimpar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jbCancelar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -316,7 +335,8 @@ public class jfVenda extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbComprar)
                     .addComponent(jbCancelar)
-                    .addComponent(jbDevolucao))
+                    .addComponent(jbDevolucao)
+                    .addComponent(jbLimpar))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -359,15 +379,14 @@ public class jfVenda extends javax.swing.JFrame {
                             ".: Erro :.", JOptionPane.ERROR_MESSAGE);
                     jtfCliente.requestFocus();
                     return false;
-           
+
                 }
             }
         }
         return true;
     }
-    
-    
-    
+
+
     private void jtfLivroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfLivroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jtfLivroActionPerformed
@@ -394,8 +413,8 @@ public class jfVenda extends javax.swing.JFrame {
         // TODO add your handling code here:
         Venda ven = new Venda();
         btnClick = (JButton) evt.getSource();
-        if(validaInputs()){
-        if (jrbCpf.isSelected()) {        
+        if (validaInputs()) {
+            if (jrbCpf.isSelected()) {
                 try {
                     VendaService vendaS = ServicosFactory.getVendaService();
                     ClienteService clienteS = ServicosFactory.getClienteService();
@@ -404,59 +423,52 @@ public class jfVenda extends javax.swing.JFrame {
                     int idCliente = clienteS.getIdCliente((jtfCliente.getText()));
                     int idLivro = livroS.getIdLivro((jtfLivro.getText()));
                     int quantCompra = (Integer.parseInt(jtfQuant.getText()));
-                    
+
                     float subTotal = (Float.parseFloat(jlSubTotal.getText()));
-                    
+                    if((Integer.parseInt(jlEstoque.getText()))< (Integer.parseInt(jtfQuant.getText()))){
+                        System.out.println("Que isso meu filho, calma");
+                    }else{
                     LocalDate dataVenda = LocalDate.now();
                     Venda v = new Venda(id, idCliente, idLivro, quantCompra, subTotal, dataVenda);
                     vendaS.cadVenda(v);
-                  //  int estoqueLivro = livroS.getEstoqueLivro(Integer.parseInt(jlEstoque.getText()));
-                  //  Livro model = new Livro();
-                   // model.setEstoque(estoqueLivro);
-                    
-                   // int estoque = livroS.getIdLivro(jtfLivro.getText());
-      
-                    //estoqueLivro = estoqueLivro - Integer.parseInt(jtfQuant.getText());
-                   // livroS.diminuirEstoqueBD(-quantCompra);
-                   // int estoque = (Integer.parseInt(jlEstoque.getText()) - Integer.parseInt(jtfQuant.getText()));
-                    //jlEstoque.setText(estoque);int estoque = (Integer.parseInt(jlEstoque.getText()) - Integer.parseInt(jtfQuant.getText()));
-                //jlEstoque.setText(estoque);
+                    livroS.diminuirEstoqueBD(idLivro,Integer.parseInt(jtfQuant.getText()));
                     this.addRowToTableBD();
-
+                    jbLimpar.doClick();
+                    }
                 } catch (SQLException ex) {
                     Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 JOptionPane.showMessageDialog(this, "venda cadastrada com sucesso!");
-            
-        } else if (jrbCnpj.isSelected()) {
-            try {
-                VendaService vendaS = ServicosFactory.getVendaService();
-                ClienteService clienteS = ServicosFactory.getClienteService();
-                LivroService livroS = ServicosFactory.getLivroService();
-                int id = cadVendas.gerarId();
-                int idCliente = clienteS.getIdClienteCnpj((jtfCliente.getText()));
-                int idLivro = livroS.getIdLivro((jtfLivro.getText()));
-                int quantCompra = (Integer.parseInt(jtfQuant.getText()));
-                float subTotal = (Float.parseFloat(jlSubTotal.getText()));
-                
-                LocalDate dataVenda = LocalDate.now();
-                
-                Venda v = new Venda(id, idCliente, idLivro, quantCompra, subTotal, dataVenda);
-                vendaS.cadVenda(v);
-//                
-                this.addRowToTableBD();
 
-            } catch (SQLException ex) {
-                Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+            } else if (jrbCnpj.isSelected()) {
+                try {
+                    VendaService vendaS = ServicosFactory.getVendaService();
+                    ClienteService clienteS = ServicosFactory.getClienteService();
+                    LivroService livroS = ServicosFactory.getLivroService();
+                    int id = cadVendas.gerarId();
+                    int idCliente = clienteS.getIdClienteCnpj((jtfCliente.getText()));
+                    int idLivro = livroS.getIdLivro((jtfLivro.getText()));
+                    int quantCompra = (Integer.parseInt(jtfQuant.getText()));
+                    float subTotal = (Float.parseFloat(jlSubTotal.getText()));
+
+                    LocalDate dataVenda = LocalDate.now();
+
+                    Venda v = new Venda(id, idCliente, idLivro, quantCompra, subTotal, dataVenda);
+                    vendaS.cadVenda(v);
+                    livroS.diminuirEstoqueBD(idLivro,Integer.parseInt(jtfQuant.getText()));
+                    this.addRowToTableBD();
+                    jbLimpar.doClick();
+                } catch (SQLException ex) {
+                    Logger.getLogger(jfLivro.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                JOptionPane.showMessageDialog(this, "venda cadastrada com sucesso!");
             }
-            JOptionPane.showMessageDialog(this, "venda cadastrada com sucesso!");
-        }
         }
     }//GEN-LAST:event_jbComprarActionPerformed
-    
+
 //                    int estoque = (Integer.parseInt(jlEstoque.getText()) - Integer.parseInt(jtfQuant.getText()));
-                    //jlEstoque.setText(estoque);int estoque = (Integer.parseInt(jlEstoque.getText()) - Integer.parseInt(jtfQuant.getText()));
-                //jlEstoque.setText(estoque);
+    //jlEstoque.setText(estoque);int estoque = (Integer.parseInt(jlEstoque.getText()) - Integer.parseInt(jtfQuant.getText()));
+    //jlEstoque.setText(estoque);
     private void jtfClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfClienteFocusLost
         // TODO add your handling code here:
         try {
@@ -465,8 +477,8 @@ public class jfVenda extends javax.swing.JFrame {
             if (!clienteS.verCPF(jtfCliente.getText())) {
                 int id = clienteS.getIdCliente(jtfCliente.getText());
                 jlCliente.setText(clienteS.getNomeCliente(id));
-                
-            } else if(!clienteS.verCNPJ(jtfCliente.getText())){    
+
+            } else if (!clienteS.verCNPJ(jtfCliente.getText())) {
                 int id = clienteS.getIdClienteCnpj(jtfCliente.getText());
                 jlCliente.setText(clienteS.getNomeCliente(id));
             } else {
@@ -475,7 +487,7 @@ public class jfVenda extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(jfVenda.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
 
     }//GEN-LAST:event_jtfClienteFocusLost
 
@@ -509,6 +521,24 @@ public class jfVenda extends javax.swing.JFrame {
         jlSubTotal.setText(Float.toString(calculo));
 
     }//GEN-LAST:event_jtfQuantFocusLost
+
+    private void jbDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDevolucaoActionPerformed
+        // TODO add your handling code here:
+        
+        
+    }//GEN-LAST:event_jbDevolucaoActionPerformed
+
+    private void jbLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimparActionPerformed
+        // TODO add your handling code here:
+        jtfCliente.setText("");
+        jtfLivro.setText("");
+        jtfQuant.setText("");
+        jlCliente.setText("");
+        jlLivro.setText("");
+        jlPreco.setText("");
+        jlEstoque.setText("");
+        jlSubTotal.setText("");
+    }//GEN-LAST:event_jbLimparActionPerformed
 
     /**
      * @param args the command line arguments
@@ -564,6 +594,7 @@ public class jfVenda extends javax.swing.JFrame {
     private javax.swing.JButton jbCancelar;
     private javax.swing.JButton jbComprar;
     private javax.swing.JButton jbDevolucao;
+    private javax.swing.JButton jbLimpar;
     private javax.swing.JLabel jlCliente;
     private javax.swing.JLabel jlEstoque;
     private javax.swing.JLabel jlLivro;

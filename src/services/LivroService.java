@@ -50,9 +50,27 @@ public class LivroService {
         return lDAO.getPrecoLivro(id);
     }
     
-    public float getEstoqueLivro(int id) throws SQLException {
+    public int getEstoqueLivro(int id) throws SQLException {
         LivroDAO lDAO = DAOFactory.getLivroDAO();
         return lDAO.getEstoqueLivro(id);
     }
     
+    public void deletarLivroBD(int id) throws SQLException {
+        LivroDAO lDAO = DAOFactory.getLivroDAO();
+        lDAO.deletarLivro(id);
+    }
+    public void atualizarLivroBD(Livro lVO) throws SQLException {
+        LivroDAO lDAO = DAOFactory.getLivroDAO();
+        lDAO.atualizarLivro(lVO);
+    }
+    /*
+    public int diminuirEstoqueBD(int estoque) throws SQLException {
+        LivroDAO lDAO = DAOFactory.getLivroDAO();
+        return lDAO.diminuirEstoqueLivro(estoque);
+    }
+    */
+    public int diminuirEstoqueBD(Livro lVO) throws SQLException {
+        LivroDAO lDAO = DAOFactory.getLivroDAO();
+        return lDAO.diminuirEstoque(lVO);
+    }
 }

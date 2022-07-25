@@ -5,9 +5,10 @@
         <group name="Geral">
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/view/jfEditora.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/services/LivroService.java</file>
-            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/services/VendaService.java</file>
+            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/DAO/ClienteDAO.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/DAO/VendaDAO.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/view/jfVenda.java</file>
+            <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/view/jfLivro.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/model/Venda.java</file>
             <file>file:/C:/Users/casso/OneDrive/Documentos/NetBeansProjects/LivrariaDAO_1/src/DAO/LivroDAO.java</file>
         </group>

@@ -128,6 +128,12 @@ public class jfEditora extends javax.swing.JFrame {
 
         jLabel5.setText("Gerente");
 
+        jtfTelefone.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtfTelefoneKeyTyped(evt);
+            }
+        });
+
         jtEditora.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -139,12 +145,22 @@ public class jfEditora extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jScrollPane1.setViewportView(jtEditora);
+        if (jtEditora.getColumnModel().getColumnCount() > 0) {
+            jtEditora.getColumnModel().getColumn(0).setPreferredWidth(5);
+        }
 
         jbCancelar.setText("Cancelar");
         jbCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -175,6 +191,7 @@ public class jfEditora extends javax.swing.JFrame {
         });
 
         jbConfirmar.setText("Confirmar");
+        jbConfirmar.setEnabled(false);
         jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbConfirmarActionPerformed(evt);
@@ -343,27 +360,28 @@ public class jfEditora extends javax.swing.JFrame {
     private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
         // TODO add your handling code here:
         try {
-            // TODO add your handling code here:
-            //ajustando comportamento dos botões
+            
+            jbDeletar.setEnabled(false);
+            jbSalvar.setEnabled(false);
+            jbEditar.setEnabled(false);
+            jbLimpar.setEnabled(false);
+            jbConfirmar.setEnabled(true);
+            jtfNomeEditora.setEnabled(false);
 
-            //carregar os dados da pessoa selecionada nos JTextFields
+            
             int linha;
             String gerente;
-
             linha = jtEditora.getSelectedRow();
             gerente = (String) jtEditora.getValueAt(linha, 4);
-
             //Pessoa p = cadPessoas.getByDoc(cpf);
             EditoraService editoraS = ServicosFactory.getEditoraService();
             Editora e = editoraS.buscaGerenteBD(gerente);
-
             // if (jrbCpf.isSelected()) {
                 jtfNomeEditora.setText(e.getNmEditora());
                 jtfGerente.setText(e.getGerente());
                 jtfEndereco.setText(e.getEndereco());
                 jtfTelefone.setText(e.getTelefone());
-
-           
+         
         } catch (SQLException ex) {
             Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -398,6 +416,12 @@ public class jfEditora extends javax.swing.JFrame {
             jbLimpar.doClick();
             // jBLimpar.setText("Limpar");
             jTableFilterClear();
+            jbDeletar.setEnabled(true);
+            jbSalvar.setEnabled(true);
+            jbEditar.setEnabled(true);
+            jbLimpar.setEnabled(true);
+            jbConfirmar.setEnabled(false);
+            jtfNomeEditora.setEnabled(false);
             String msg = "Dados atualizados com sucesso!";
             JOptionPane.showMessageDialog(this, msg, ".: Atualizar :.",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -407,6 +431,14 @@ public class jfEditora extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_jbConfirmarActionPerformed
+
+    private void jtfTelefoneKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfTelefoneKeyTyped
+        // TODO add your handling code here:
+        String caracteres = "0987654321";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtfTelefoneKeyTyped
 
     /**
      * @param args the command line arguments

@@ -8,8 +8,11 @@ package view;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import model.Livro;
 import static livrariaDAO.TLivrariaOOJF.cadEditoras;
 import static livrariaDAO.TLivrariaOOJF.cadLivros;
@@ -17,6 +20,7 @@ import services.EditoraService;
 import services.LivroService;
 
 import services.ServicosFactory;
+import util.ValidaISBN;
 
 /**
  *
@@ -30,22 +34,32 @@ public class jfLivro extends javax.swing.JFrame {
     public jfLivro() throws SQLException {
         initComponents();
         addRowToTableBD();
-        this.addEditoraJCB();
+        //  this.addEditoraJCB();
     }
 
+    public void jTableFilterClear() {
+        DefaultTableModel model = (DefaultTableModel) jtLivros.getModel();
+        final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        jtLivros.setRowSorter(sorter);
+        sorter.setRowFilter(null);
+    }
+
+    /*
     public void addEditoraJCB() {
+        EditoraService editoraS = ServicosFactory.getEditoraService();
         jcbEditora.addItem("Selecione");
         cadEditoras.getEditora().forEach(listEdt -> {
             jcbEditora.addItem(listEdt.getNmEditora());
         });
     }
-
+     */
     public void addRowToTableBD() throws SQLException {
         DefaultTableModel model = (DefaultTableModel) jtLivros.getModel();
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
         Object rowData[] = new Object[8];//define vetor das colunas
         LivroService livroS = ServicosFactory.getLivroService();
+        EditoraService editoraS = ServicosFactory.getEditoraService();
         for (Livro listLiv : livroS.getLivros()) {
             rowData[0] = listLiv.getIdLivro();
             rowData[1] = listLiv.getTitulo();
@@ -54,10 +68,10 @@ public class jfLivro extends javax.swing.JFrame {
             rowData[4] = listLiv.getIsbn();
             rowData[5] = listLiv.getEstoque();
             rowData[6] = listLiv.getPreco();
-            rowData[7] = cadEditoras.getNomeEdt(listLiv.getIdEditora());
+            rowData[7] = editoraS.getNomeEditora(listLiv.getIdEditora());
             model.addRow(rowData);
         }
-
+// rowData[1] = livroS.getNomeLivro(v.getIdLivro());
     }
 
     /**
@@ -70,7 +84,6 @@ public class jfLivro extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jcbEditora = new javax.swing.JComboBox<>();
         jbSalvar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -91,16 +104,11 @@ public class jfLivro extends javax.swing.JFrame {
         jbLimpar = new javax.swing.JButton();
         jbCancelar = new javax.swing.JButton();
         jtfEditora = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jbEditar = new javax.swing.JButton();
+        jbConfirmar = new javax.swing.JButton();
+        jbDeletar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jcbEditora.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcbEditoraActionPerformed(evt);
-            }
-        });
 
         jbSalvar.setText("Salvar");
         jbSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -138,12 +146,42 @@ public class jfLivro extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Float.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true, false, true
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jScrollPane1.setViewportView(jtLivros);
+        if (jtLivros.getColumnModel().getColumnCount() > 0) {
+            jtLivros.getColumnModel().getColumn(0).setPreferredWidth(25);
+            jtLivros.getColumnModel().getColumn(5).setPreferredWidth(50);
+            jtLivros.getColumnModel().getColumn(6).setPreferredWidth(50);
+        }
+
+        jtfISBN.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtfISBNKeyTyped(evt);
+            }
+        });
+
+        jtfEstoque.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtfEstoqueKeyTyped(evt);
+            }
+        });
+
+        jtfPreco.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtfPrecoKeyTyped(evt);
+            }
+        });
 
         jbLimpar.setText("Limpar");
         jbLimpar.addActionListener(new java.awt.event.ActionListener() {
@@ -165,9 +203,27 @@ public class jfLivro extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Editar");
+        jbEditar.setText("Editar");
+        jbEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEditarActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Confirmar");
+        jbConfirmar.setText("Confirmar");
+        jbConfirmar.setEnabled(false);
+        jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbConfirmarActionPerformed(evt);
+            }
+        });
+
+        jbDeletar.setText("Deletar");
+        jbDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbDeletarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -187,7 +243,7 @@ public class jfLivro extends javax.swing.JFrame {
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jtfAssunto))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6)
@@ -209,20 +265,20 @@ public class jfLivro extends javax.swing.JFrame {
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(jLabel8)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jtfEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(0, 0, Short.MAX_VALUE))
-                                            .addComponent(jcbEditora, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jtfEditora))
                                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addGap(0, 0, Short.MAX_VALUE)
                                                 .addComponent(jbSalvar)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jbDeletar)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jbLimpar))))
                                     .addComponent(jtfAutor)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(30, 30, 30)
-                        .addComponent(jButton1)
+                        .addComponent(jbEditar)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
+                        .addComponent(jbConfirmar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbCancelar)))
                 .addContainerGap())
@@ -253,18 +309,18 @@ public class jfLivro extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(jtfEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
-                    .addComponent(jtfPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jcbEditora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtfPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbSalvar)
-                    .addComponent(jbLimpar))
+                    .addComponent(jbLimpar)
+                    .addComponent(jbDeletar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
+                    .addComponent(jbEditar)
+                    .addComponent(jbConfirmar)
                     .addComponent(jbCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -291,26 +347,34 @@ public class jfLivro extends javax.swing.JFrame {
     private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
         // TODO add your handling code here:
         Livro liv = new Livro();
-        if (jtfTitulo.getText().isEmpty() && jtfAutor.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencher Titulo e Autor!");
+        if (jtfTitulo.getText().isEmpty() || jtfAutor.getText().isEmpty() || jtfAssunto.getText().isEmpty() || jtfEditora.getText().isEmpty()
+                || jtfISBN.getText().isEmpty() || jtfPreco.getText().isEmpty() || jtfEstoque.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Preencher todos os campos!");
+        }else if(!ValidaISBN.isValidISBN(jtfISBN.getText())){    
+         JOptionPane.showMessageDialog(this,
+                            "ISBN informado esta incorreto!!!",
+                            ".: Erro :.", JOptionPane.ERROR_MESSAGE);
+                    jtfISBN.requestFocus();
+              //      return false;
         } else {
             try {
-            EditoraService editoraS = ServicosFactory.getEditoraService();
-            int id = cadLivros.gerarId();
-            int idEditora;
-            
+                EditoraService editoraS = ServicosFactory.getEditoraService();
+                int id = cadLivros.gerarId();
+                int idEditora;
+
                 //idEditora = editoraS.getIdEditora(jcbEditora.getSelectedItem().toString());
-                 idEditora = editoraS.getIdEditora((jtfEditora.getText()));
-            String titulo=jtfTitulo.getText();
-            String assunto=jtfAssunto.getText();
-            String autor=jtfAutor.getText();
-            String isbn=jtfISBN.getText();
-            int estoque=(Integer.parseInt(jtfEstoque.getText()));
-            float preco=(Float.parseFloat(jtfPreco.getText()));
-            
-            Livro l = new Livro(id, titulo, autor, assunto, isbn,estoque,preco,idEditora);
-            LivroService livroS = ServicosFactory.getLivroService();
+                idEditora = editoraS.getIdEditora((jtfEditora.getText()));
+                String titulo = jtfTitulo.getText();
+                String autor = jtfAutor.getText();
+                String assunto = jtfAssunto.getText();
        
+                String isbn = jtfISBN.getText();
+                int estoque = (Integer.parseInt(jtfEstoque.getText()));
+                float preco = (Float.parseFloat(jtfPreco.getText()));
+
+                Livro l = new Livro(id, titulo, assunto, autor, isbn, estoque, preco, idEditora);
+                LivroService livroS = ServicosFactory.getLivroService();
+
                 livroS.cadLivro(l);
                 this.addRowToTableBD();
                 jbLimpar.doClick();
@@ -323,15 +387,167 @@ public class jfLivro extends javax.swing.JFrame {
 
     private void jbLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimparActionPerformed
         // TODO add your handling code here:
+        jtfTitulo.setText("");
+        jtfAutor.setText("");
+        jtfAssunto.setText("");
+        jtfISBN.setText("");
+        jtfEditora.setText("");
+        jtfEstoque.setText("");
+        jtfPreco.setText("");
+        jtfTitulo.requestFocus();
     }//GEN-LAST:event_jbLimparActionPerformed
-
-    private void jcbEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbEditoraActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jcbEditoraActionPerformed
 
     private void jtfEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfEditoraActionPerformed
         // TODO add your handling code here:
+
     }//GEN-LAST:event_jtfEditoraActionPerformed
+
+    private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
+        // TODO add your handling code here:
+        try {
+            jbDeletar.setEnabled(false);
+            jbSalvar.setEnabled(false);
+            jbEditar.setEnabled(false);
+            jbLimpar.setEnabled(false);
+            jbConfirmar.setEnabled(true);
+            jtfISBN.setEnabled(false);
+            // TODO add your handling code here:
+            //ajustando comportamento dos botões
+
+            //carregar os dados da pessoa selecionada nos JTextFields
+            int linha;
+            String isbn;
+
+            linha = jtLivros.getSelectedRow();
+            isbn = (String) jtLivros.getValueAt(linha, 4);
+
+            //Pessoa p = cadPessoas.getByDoc(cpf);
+            EditoraService editoraS = ServicosFactory.getEditoraService();
+            LivroService livroS = ServicosFactory.getLivroService();
+            Livro l = livroS.buscaLivroBD(isbn);
+
+            // if (jrbCpf.isSelected()) {
+            jtfTitulo.setText(l.getTitulo());
+            jtfAssunto.setText(l.getAssunto());
+            jtfAutor.setText(l.getAutor());
+            jtfISBN.setText(l.getIsbn());
+            jtfEstoque.setText(Integer.toString(l.getEstoque()));
+            jtfPreco.setText(Float.toString(l.getPreco()));
+            jtfEditora.setText(editoraS.getNomeEditora(l.getIdEditora()));
+            //idEditora = editoraS.getIdEditora((jtfEditora.getText()));
+            //l.setIdEditora(editoraS.getIdEditora(jtfEditora.getText()));
+        } catch (SQLException ex) {
+            Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbEditarActionPerformed
+
+    private void jbDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeletarActionPerformed
+        // TODO add your handling code here:
+        int linha;
+        String isbn;
+        linha = jtLivros.getSelectedRow();
+        isbn = (String) jtLivros.getValueAt(linha, 4);
+        //Pessoa p = cadPessoas.getByDoc(cpf);
+        EditoraService editoraS = ServicosFactory.getEditoraService();
+        LivroService livroS = ServicosFactory.getLivroService();
+        Livro l = new Livro();
+        try {
+            l = livroS.buscaLivroBD(isbn);
+        } catch (SQLException ex) {
+            Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //int resposta = JOptionPane.showConfirmDialog(this, "deseja realmente deletar " + p.getNomePessoa() + "?", ".:Deletar:.", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        Object[] resp = {"Sim", "Não"};
+        int resposta = JOptionPane.showOptionDialog(this,
+                "Deseja realmente deletar " + l.getTitulo() + "?",
+                ".: Deletar :.", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                null, resp, resp[0]);
+        if (resposta == 0) {
+            //cadPessoas.deletar(p);
+            try {
+                //addRowToTable();
+                livroS.deletarLivroBD(l.getIdLivro());
+                addRowToTableBD();
+                JOptionPane.showMessageDialog(this, "Livro deletado com sucesso!", "", JOptionPane.INFORMATION_MESSAGE);
+            } catch (SQLException ex) {
+                Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Entedemos sua decisão", "", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }//GEN-LAST:event_jbDeletarActionPerformed
+
+    private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
+        // TODO add your handling code here:
+        JButton btnClick = (JButton) evt.getSource();
+        // if (validaInputs()) {
+        try {
+
+            EditoraService editoraS = ServicosFactory.getEditoraService();
+            LivroService livroS = ServicosFactory.getLivroService();
+            Livro l = livroS.buscaLivroBD(jtfISBN.getText());
+
+            l.setTitulo(jtfTitulo.getText());
+            l.setAssunto(jtfAssunto.getText());
+            l.setAutor(jtfAutor.getText());
+            l.setIsbn(jtfISBN.getText());
+            l.setEstoque(Integer.parseInt(jtfEstoque.getText()));
+            l.setPreco(Float.parseFloat(jtfPreco.getText()));
+            l.setIdEditora(editoraS.getIdEditora(jtfEditora.getText()));
+
+            //atualiza pessoa no BD com dados na tela
+            livroS.atualizarLivroBD(l);
+
+            addRowToTableBD();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        jbDeletar.setEnabled(true);
+        jbSalvar.setEnabled(true);
+        jbEditar.setEnabled(true);
+        jbLimpar.setEnabled(true);
+        jbConfirmar.setEnabled(false);
+        jtfISBN.setEnabled(true);
+        jbLimpar.doClick();
+        // jBLimpar.setText("Limpar");
+        jTableFilterClear();
+
+        String msg = "Dados atualizados com sucesso!";
+        JOptionPane.showMessageDialog(this, msg, ".: Atualizar :.",
+                JOptionPane.INFORMATION_MESSAGE);
+        //} else {
+        //jbLimpar.doClick();
+        //jtfCPF.setEnabled(true);
+        //
+
+    }//GEN-LAST:event_jbConfirmarActionPerformed
+
+    private void jtfEstoqueKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfEstoqueKeyTyped
+        // TODO add your handling code here:
+        String caracteres = "0987654321";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtfEstoqueKeyTyped
+
+    private void jtfPrecoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfPrecoKeyTyped
+        // TODO add your handling code here:
+        String caracteres = "0987654321";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtfPrecoKeyTyped
+
+    private void jtfISBNKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfISBNKeyTyped
+        // TODO add your handling code here:]
+         String caracteres = "0987654321";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtfISBNKeyTyped
 
     /**
      * @param args the command line arguments
@@ -373,8 +589,6 @@ public class jfLivro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -386,9 +600,11 @@ public class jfLivro extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbCancelar;
+    private javax.swing.JButton jbConfirmar;
+    private javax.swing.JButton jbDeletar;
+    private javax.swing.JButton jbEditar;
     private javax.swing.JButton jbLimpar;
     private javax.swing.JButton jbSalvar;
-    private javax.swing.JComboBox<String> jcbEditora;
     private javax.swing.JTable jtLivros;
     private javax.swing.JTextField jtfAssunto;
     private javax.swing.JTextField jtfAutor;

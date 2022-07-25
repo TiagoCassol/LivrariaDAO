@@ -134,13 +134,13 @@ public class ClienteDAO {
 
         try {
             String sql;
-            sql = "select cpf from cliente where cnpj = '" + cnpj + "'";
+            sql = "select CNPJ from cliente where cnpj = '" + cnpj + "'";
             ResultSet rs = stat.executeQuery(sql);
             while (rs.next()) {
                 verCNPJ = rs.wasNull();
             }
         } catch (SQLException e) {
-            throw new SQLException("Pessoa com este CPF não existe. \n" + e.getMessage());
+            throw new SQLException("Pessoa com este CNPJ não existe. \n" + e.getMessage());
 
         } finally {
             con.close();
@@ -188,6 +188,23 @@ public class ClienteDAO {
             for (Cliente cli : buscarClientes()) {
                 System.out.println("teste: "+cli);
                 if (cli.getCpf()!= null && cli.getCpf().equals(cpf)) {             
+                    idCliente = cli.getIdCliente();
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Cliente com este cpf não existe. \n"
+                    + e.getMessage());
+        }
+        return idCliente;
+    }
+    
+    public int getIdClienteCnpj(String Cnpj) throws SQLException {
+        int idCliente = 0;
+        try {
+            for (Cliente cli : buscarClientes()) {
+                System.out.println("teste: "+cli);
+                if (cli.getCnpj()!= null && cli.getCnpj().equals(Cnpj)) {             
                     idCliente = cli.getIdCliente();
                     break;
                 }
@@ -246,7 +263,7 @@ public class ClienteDAO {
                 c.setIdCliente(rs.getInt("idCliente"));
                 c.setNomeCliente(rs.getString("nomeCliente"));
                 c.setCpf(rs.getString("cpf"));
-                c.setEndereco("endereco");
+                c.setEndereco(rs.getString("endereco"));
                 c.setTelefone(rs.getString("telefone"));
                 c.setCnpj(rs.getString("cnpj"));
 
@@ -276,7 +293,7 @@ public class ClienteDAO {
                 c.setIdCliente(rs.getInt("idCliente"));
                 c.setNomeCliente(rs.getString("nomeCliente"));
                 c.setCpf(rs.getString("cpf"));
-                c.setEndereco("endereco");
+                c.setEndereco(rs.getString("endereco"));
                 c.setTelefone(rs.getString("telefone"));
                 c.setCnpj(rs.getString("cnpj"));
 

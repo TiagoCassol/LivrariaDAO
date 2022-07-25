@@ -102,6 +102,18 @@ public class jfCliente extends javax.swing.JFrame {
 
         jtfNomeCliente.setToolTipText("");
 
+        jtfCpfCnpj.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jtfCpfCnpjKeyPressed(evt);
+            }
+        });
+
+        jtfTelefone.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtfTelefoneKeyTyped(evt);
+            }
+        });
+
         jbSalvar.setText("Salvar");
         jbSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -134,13 +146,27 @@ public class jfCliente extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jtClientes.setToolTipText("");
         jScrollPane2.setViewportView(jtClientes);
+        if (jtClientes.getColumnModel().getColumnCount() > 0) {
+            jtClientes.getColumnModel().getColumn(0).setResizable(false);
+            jtClientes.getColumnModel().getColumn(0).setPreferredWidth(5);
+            jtClientes.getColumnModel().getColumn(2).setPreferredWidth(75);
+            jtClientes.getColumnModel().getColumn(3).setPreferredWidth(100);
+            jtClientes.getColumnModel().getColumn(5).setPreferredWidth(150);
+        }
         jtClientes.getAccessibleContext().setAccessibleName("");
 
         jbDeletar.setText("Deletar");
@@ -158,6 +184,7 @@ public class jfCliente extends javax.swing.JFrame {
         });
 
         jbConfirmar.setText("Confirmar");
+        jbConfirmar.setEnabled(false);
         jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbConfirmarActionPerformed(evt);
@@ -183,56 +210,57 @@ public class jfCliente extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jbDeletar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jbSalvar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jbLimpar))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jSeparator1)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 636, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jrbCpf)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jrbCnpj)))
+                                        .addComponent(jrbCnpj))
+                                    .addComponent(jLabel2))
                                 .addGap(16, 16, 16)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jtfNomeCliente)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jtfCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(27, 27, 27)
                                         .addComponent(jbPesqCPF)
                                         .addGap(44, 44, 44)
                                         .addComponent(jbPesqCNPJ)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE))))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jtfNomeCliente)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5))
+                                .addGap(65, 65, 65)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jtfTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jtfEndereco)))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(jbEditar)
                         .addGap(18, 18, 18)
                         .addComponent(jbConfirmar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jbCancelar))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jbDeletar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jbSalvar)
-                        .addGap(12, 12, 12)
-                        .addComponent(jbLimpar))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
-                        .addGap(65, 65, 65)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jtfTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jtfEndereco))))
-                .addContainerGap())
+                        .addComponent(jbCancelar)))
+                .addGap(56, 56, 56))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,7 +309,7 @@ public class jfCliente extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 663, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -512,7 +540,16 @@ public class jfCliente extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             //ajustando comportamento dos botões
-
+            jbDeletar.setEnabled(false);
+            jbSalvar.setEnabled(false);
+            jbEditar.setEnabled(false);
+            jbLimpar.setEnabled(false);
+            jbConfirmar.setEnabled(true);
+            jtfCpfCnpj.setEnabled(false);
+            jbPesqCPF.setEnabled(false);
+            jbPesqCNPJ.setEnabled(false);
+            jrbCnpj.setEnabled(false);
+            jrbCpf.setEnabled(false);
             //carregar os dados da pessoa selecionada nos JTextFields
             int linha;
             String cpf;
@@ -590,19 +627,24 @@ public class jfCliente extends javax.swing.JFrame {
                     clienteS.atualizarClienteCnpjBD(p);
                     addRowToTableBD();
                 }
-                /*
-                if (p.getCnpj() != null) { 
-                    p.setCnpj(jtfCpfCnpj.getText());
-                    p.setCpf(null);
-                    clienteS.atualizarClienteCnpjBD(c);
-                    addRowToTableBD();                    
-                }
-                 */
 
             } catch (SQLException ex) {
                 Logger.getLogger(jfCliente.class.getName()).log(Level.SEVERE, null, ex);
             }
+            jbConfirmar.setEnabled(false);
+            jbSalvar.setEnabled(true);
+            jbLimpar.setEnabled(true);
+            jtfCpfCnpj.setEnabled(true);
             jbLimpar.doClick();
+            
+            jbDeletar.setEnabled(true);
+            jbEditar.setEnabled(true);
+
+
+            jbPesqCPF.setEnabled(true);
+            jbPesqCNPJ.setEnabled(true);
+            jrbCnpj.setEnabled(true);
+            jrbCpf.setEnabled(true);
             // jBLimpar.setText("Limpar");
             jTableFilterClear();
             String msg = "Dados atualizados com sucesso!";
@@ -684,6 +726,22 @@ public class jfCliente extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_jbPesqCNPJActionPerformed
+
+    private void jtfTelefoneKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfTelefoneKeyTyped
+        // TODO add your handling code here:
+        String caracteres = "0987654321";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtfTelefoneKeyTyped
+
+    private void jtfCpfCnpjKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfCpfCnpjKeyPressed
+        // TODO add your handling code here:
+        String caracteres = "0987654321";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtfCpfCnpjKeyPressed
 
     /**
      * @param args the command line arguments

@@ -45,5 +45,9 @@ public class EditoraService {
     EditoraDAO eDAO = DAOFactory.getEditoraDAO();
     return eDAO.getIdEditora(editora);
     }
+    public String getNomeEditora(int id) throws SQLException {
+        EditoraDAO cDAO = DAOFactory.getEditoraDAO();
+        return cDAO.getNomeEditora(id);
+    }
     
 }

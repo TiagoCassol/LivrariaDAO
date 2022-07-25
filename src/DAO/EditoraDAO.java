@@ -159,4 +159,19 @@ public class EditoraDAO {
         return idEditora;
     }
 
+      public String getNomeEditora(int id) throws SQLException {
+        String nomeEditora = null;
+        try {
+            for (Editora edi : buscarEditoras()) {
+                if (edi.getIdEditora() == id) {
+                    nomeEditora = edi.getNmEditora();
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Editora com este id não existe. \n"
+                    + e.getMessage());
+        }
+        return nomeEditora;
+    }
+      
 }

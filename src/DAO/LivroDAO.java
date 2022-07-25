@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import model.Livro;
+import services.ServicosFactory;
+import services.VendaService;
 
 /**
  *
@@ -63,8 +65,9 @@ public class LivroDAO {
                 //lado do java||lado do banco
                 l.setIdLivro(rs.getInt("idLivro"));
                 l.setTitulo(rs.getString("titulo"));
-                l.setAutor(rs.getString("autor"));
                 l.setAssunto(rs.getString("assunto"));
+                l.setAutor(rs.getString("autor"));
+                
                 l.setIsbn(rs.getString("isbn"));
                 l.setEstoque(rs.getInt("estoque"));
                 l.setPreco(rs.getInt("preco"));
@@ -95,8 +98,9 @@ public class LivroDAO {
                 //lado do java||lado do banco
                 l.setIdLivro(rs.getInt("idLivro"));
                 l.setTitulo(rs.getString("titulo"));
-                l.setAutor(rs.getString("autor"));
                 l.setAssunto(rs.getString("assunto"));
+                l.setAutor(rs.getString("autor"));
+                
                 l.setIsbn(rs.getString("isbn"));
                 l.setEstoque(rs.getInt("estoque"));
                 l.setPreco(rs.getInt("preco"));
@@ -122,12 +126,13 @@ public class LivroDAO {
             String sql;
             sql = "update livro set "
                     + "titulo = '" + lVO.getTitulo() + "', "
-                    + "autor = '" + lVO.getAutor() + "', "
                     + "assunto = '" + lVO.getAssunto() + "', "
+                    + "autor = '" + lVO.getAutor() + "', "
+                    
                     + "isbn = '" + lVO.getIsbn() + "', "
                     + "estoque= " + lVO.getEstoque() + ","
-                    + "preco" + lVO.getPreco() + ","
-                    + "IdEditora" + lVO.getIdEditora() + ""
+                    + "preco=" + lVO.getPreco() + ","
+                    + "IdEditora=" + lVO.getIdEditora() + " "
                     + "where idLivro = " + lVO.getIdLivro() + "";
             System.out.println(sql);
             stat.executeUpdate(sql);
@@ -229,8 +234,8 @@ public class LivroDAO {
         return precoLivro;
     }
 
-    public float getEstoqueLivro(int id) throws SQLException {
-        float estoqueLivro = 0;
+    public int getEstoqueLivro(int id) throws SQLException {
+        int estoqueLivro = 0;
         try {
             for (Livro liv : buscarLivros()) {
                 if (liv.getIdLivro() == id) {
@@ -243,5 +248,95 @@ public class LivroDAO {
         }
         return estoqueLivro;
     }
+    
+    public int aumentarEstoqueLivro(int id) throws SQLException {
+        int estoqueLivro = 0;
+        try {
+            for (Livro liv : buscarLivros()) {
+                if (liv.getIdLivro() == id) {
+                    estoqueLivro = liv.getEstoque();
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Estoque com este id não existe. \n"
+                    + e.getMessage());
+        }
+        return estoqueLivro;
+    }
+    
+    public int diminuirEstoqueLivro(Livro quantCompra) throws SQLException {
+        Connection con = Conexao.getConexao();
+        //cria um objeto stat reponsavel por enviar os comandos sql do Java
+        //para serem executados dentro do DB
+        Statement stat = con.createStatement();
+        int estoque =0;
+        try {
+            String sql;
+            sql = "update livro set "
+                    + "estoque= "+ quantCompra.getEstoque()+ ""
+                    + "where idLivro = " + quantCompra.getIdLivro() + "";
+            System.out.println(sql);
+            stat.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao atualizar estoque. \n" + e.getMessage());
+        } finally {
+            con.close();
+            stat.close();
+        }
+        return estoque;
+    }
+/*
+        public int diminuirEstoqueLiv(int estoque) throws SQLException {
+         Connection con = Conexao.getConexao();
+        Statement stat = con.createStatement();
+        
+        int estoque = estoqueLivro;
+        int estoqueLivro = getEstoqueLivro(Integer.parseInt(jlEstoque.getText()));
+        
+        VendaService vendaS = ServicosFactory.getVendaService();
+        estoque = estoqueLivro - estoque;
+    }
+*/
+        public int diminuirEstoque(Livro lVO) throws SQLException {
+        Connection con = Conexao.getConexao();
+        Statement stat = con.createStatement();
+        int estoque = 0;
+        try {
+            String sql;
+            sql = "update livro set "
 
+                    + "estoque= " + lVO.getEstoque() + " "
+                    + "where idLivro = " + lVO.getIdLivro() + "";
+            System.out.println(sql);
+            stat.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao atualizar livro. \n" + e.getMessage());
+        } finally {
+            con.close();
+            stat.close();
+        }
+        return estoque;
+    }
+        
+        /*
+      public void diminuirEstoque(Livro lVO) throws SQLException {
+        Connection con = Conexao.getConexao();
+        Statement stat = con.createStatement();
+        try {
+            String sql;
+            sql = "update livro set "
+
+                    + "estoque= " + lVO.getEstoque() + " "
+                    + "where idLivro = " + lVO.getIdLivro() + "";
+            System.out.println(sql);
+            stat.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao atualizar livro. \n" + e.getMessage());
+        } finally {
+            con.close();
+            stat.close();
+        }
+    }
+*/
+         
 }
